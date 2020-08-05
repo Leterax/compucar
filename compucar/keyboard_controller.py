@@ -1,16 +1,17 @@
 import keyboard
 
-pressed_keys = set()
+
+keys = {"w": 0, "a": 0, "s": 0, "d": 0, "shift": 0, "ctrl": 0}
 
 
 def on_key(event: keyboard.KeyboardEvent):
     if event.event_type == keyboard.KEY_UP:
-        pressed_keys.remove(event.name)
+        keys[event.name] = 0
     elif event.event_type == keyboard.KEY_DOWN:
-        pressed_keys.add(event.name)
+        keys[event.name] = 1
 
 
-def hook_keys(keys=("w", "a", "s", "d", "shift", "ctrl")):
+def hook_keys():
     for key in keys:
         keyboard.hook_key(key, on_key, True)
 
@@ -18,4 +19,4 @@ def hook_keys(keys=("w", "a", "s", "d", "shift", "ctrl")):
 if __name__ == "__main__":
     hook_keys()
     while True:
-        print(pressed_keys)
+        print(keys)
