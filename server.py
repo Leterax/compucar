@@ -33,7 +33,7 @@ try:
             elif command == "turbo_off":
                 turbo = 0
 
-            if command == "ctrl":
+            if command == "f":
                 speed = 0
                 steering = 0
                 turbo = 0
