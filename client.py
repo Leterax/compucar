@@ -28,5 +28,5 @@ def handle_input(udp_socket):
 
 with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
     while True:
-        time.sleep(0.1)
+        time.sleep(0.025)
         handle_input(s)

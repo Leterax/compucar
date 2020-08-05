@@ -31,6 +31,11 @@ try:
             elif command == "turbo_off":
                 turbo = 0
 
+            if command == "ctrl":
+                speed = 0
+                steering = 0
+                turbo = 0
+
             speed = max(min(100, speed), -100)
             steering = max(min(100, steering), -100)
 
@@ -51,6 +56,8 @@ try:
                 driver.set_value(driver.STEER_PIN_RIGHT, 0)
             else:
                 driver.set_value(driver.STEER_PIN_LEFT, -steering)
+
+            print(f"{speed}, {steering}, {bool(turbo)}                          ", end="\r")
 
 except Exception as e:
     driver.cleanup()
