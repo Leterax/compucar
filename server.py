@@ -1,5 +1,5 @@
 import socket
-from compucar import driver
+import driver
 from constants import *
 
 HOST = "127.0.0.1"

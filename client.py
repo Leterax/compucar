@@ -2,7 +2,7 @@ import socket
 import struct
 import time
 
-from compucar import keyboard_controller
+import keyboard_controller
 from constants import *
 
 HOST = "192.168.2.142"
