@@ -61,7 +61,7 @@ try:
 
             print(f"{speed}, {steering}, {bool(turbo)}                          ", end="\r")
 
-except Exception as e:
+except BaseException as e:
     driver.cleanup()
-    print("stopped all motor")
+    print("stopped all motors")
     raise e
