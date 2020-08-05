@@ -5,7 +5,7 @@ import time
 from compucar import keyboard_controller
 from constants import *
 
-HOST = "127.0.0.1"
+HOST = "192.168.2.142"
 PORT = 3000
 
 
