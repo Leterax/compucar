@@ -6,6 +6,8 @@ HOST = "192.168.2.142"
 PORT = 3000
 buff_size = 128
 
+STEP_VALUE = 5
+
 speed = 0
 steering = 0
 turbo = 0
@@ -18,13 +20,13 @@ try:
             command = command_to_key[msg[0]]
 
             if command == "w":
-                speed += 1
+                speed += STEP_VALUE
             elif command == "s":
-                speed -= 1
+                speed -= STEP_VALUE
             if command == "a":
-                steering -= 1
+                steering -= STEP_VALUE
             elif command == "d":
-                steering += 1
+                steering += STEP_VALUE
 
             if command == "turbo_on":
                 turbo = 1
@@ -61,4 +63,5 @@ try:
 
 except Exception as e:
     driver.cleanup()
+    print("stopped all motor")
     raise e

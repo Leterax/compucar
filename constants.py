@@ -5,6 +5,6 @@ key_to_command = {
     "d": b"\x04",
     "turbo_on": b"\x05",
     "turbo_off": b"\x06",
-    "ctrl": b"\x07",
+    "f": b"\x07",
 }
 command_to_key = {v: k for k, v in key_to_command.items()}
