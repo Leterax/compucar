@@ -1,7 +1,7 @@
 import keyboard
 
 
-keys = {"w": 0, "a": 0, "s": 0, "d": 0, "shift": 0, "f": 0}
+keys = {"w": 0, "a": 0, "s": 0, "d": 0, "t": 0, "f": 0}
 
 
 def on_key(event: keyboard.KeyboardEvent):

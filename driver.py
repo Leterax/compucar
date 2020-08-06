@@ -1,5 +1,5 @@
 import RPi.GPIO as GPIO
-
+import atexit
 
 GPIO.setmode(GPIO.BOARD)
 
@@ -42,6 +42,8 @@ def initialize_pwm():
         instance.start(0)
     return instances
 
+
+atexit.register(cleanup)
 
 # setting up all pins
 GPIO.setup(FAST_PIN, GPIO.OUT)
