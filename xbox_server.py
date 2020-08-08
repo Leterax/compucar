@@ -4,20 +4,27 @@ import struct
 import driver
 import select
 
-HOST = ""
+
+def get_hostname_ip():
+    host_name = socket.gethostname()
+    host_ip = socket.gethostbyname(host_name)
+    return host_name, host_ip
+
+
+_, HOST = get_hostname_ip()
 PORT = 3000
 buff_size = 128
 
 last_recived = 0
 
-unpacker = struct.Struct('bbb')
+unpacker = struct.Struct("bbb")
 
 with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
     s.bind((HOST, PORT))
     s.setblocking(False)
 
     while True:
-        r, _, _ = select([s],[],[], 1.)
+        r, _, _ = select.select([s], [], [], 1.0)
         if not r:
             stop = True
             print("lost connection")
@@ -51,6 +58,5 @@ with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
         else:
             driver.set_value(driver.STEER_PIN_LEFT, -steering)
 
-
-        sys.stdout.write('\033[2K\033[1G')
-        print(f"{speed:03}, {steering:03}, {turbo}, {stop}", end='\r')
+        sys.stdout.write("\033[2K\033[1G")
+        print(f"{speed:03}, {steering:03}, {turbo}, {stop}", end="\r")
