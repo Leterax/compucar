@@ -1,46 +1,54 @@
 import socket
-import driver
-from constants import *
+import sys
+import struct
+import select
 
 
-HOST = "192.168.2.245"
+# if we are on the compucar this will succeed
+# if we are not, we enter debug mode
+try:
+    import driver
+    DEBUG = False
+except ImportError:
+    DEBUG = True
+
+HOST = "127.0.0.1" if "--local" in sys.argv else sys.argv[1]
 PORT = 3000
 buff_size = 128
 
-STEP_VALUE = 5
+last_recived = 0
 
-speed = 0
-steering = 0
-turbo = 0
+unpacker = struct.Struct("bbb")
 
 with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
     s.bind((HOST, PORT))
+    s.setblocking(False)
+
+    print(f"Bound to {HOST}:{PORT} and{' ' if DEBUG else ' not '}running in debug mode")
 
     while True:
-        msg = s.recvfrom(buff_size)
-        command = command_to_key[msg[0]]
+        r, _, _ = select.select([s], [], [], 1.0)
+        if not r:
+            stop = True
+            sys.stdout.write("\033[2K\033[1G")
+            print("lost connection", end='\r')
+            continue
+        else:
+            msg = s.recvfrom(buff_size)
+            msg = msg[0]
+            steering, speed, btns = unpacker.unpack(msg)
+            turbo = btns & 1
+            stop = (btns & 2) >> 1
 
-        if command == "w":
-            speed += STEP_VALUE
-        elif command == "s":
-            speed -= STEP_VALUE
-        if command == "a":
-            steering -= STEP_VALUE
-        elif command == "d":
-            steering += STEP_VALUE
-
-        if command == "turbo_on":
-            turbo = 1
-        elif command == "turbo_off":
-            turbo = 0
-
-        if command == "f":
+        if stop:
             speed = 0
-            steering = 0
             turbo = 0
+            steering = 0
 
-        speed = max(min(100, speed), -100)
-        steering = max(min(100, steering), -100)
+        if DEBUG:
+            sys.stdout.write("\033[2K\033[1G")
+            print(f"DEBUGING: {speed:03}, {steering:03}, {turbo}, {stop}", end="\r")
+            continue
 
         if speed > 0:
             driver.set_fast(turbo)
@@ -60,4 +68,5 @@ with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
         else:
             driver.set_value(driver.STEER_PIN_LEFT, -steering)
 
-        print(f"{speed}, {steering}, {bool(turbo)}                          ", end="\r")
+        sys.stdout.write("\033[2K\033[1G")
+        print(f"{speed:03}, {steering:03}, {turbo}, {stop}", end="\r")
