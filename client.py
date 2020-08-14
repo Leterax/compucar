@@ -2,6 +2,7 @@ import socket
 from xbox_controller import XboxController
 import time
 import struct
+import sys
 
 
 def handle_input(udp_socket):
@@ -16,7 +17,7 @@ def handle_input(udp_socket):
     udp_socket.sendto(packer.pack(x, y, btns), (HOST, PORT))
 
 
-HOST = "127.0.0.1"
+HOST = "127.0.0.1" if len(sys.argv) < 2 else sys.argv[1]
 PORT = 3000
 
 controller = XboxController()
