@@ -8,6 +8,7 @@ import select
 # if we are not, we enter debug mode
 try:
     import driver
+
     DEBUG = False
 except ImportError:
     DEBUG = True
@@ -31,7 +32,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
         if not r:
             stop = True
             sys.stdout.write("\033[2K\033[1G")
-            print("lost connection", end='\r')
+            print("lost connection", end="\r")
             continue
         else:
             msg = s.recvfrom(buff_size)
