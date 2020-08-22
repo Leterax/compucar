@@ -2,12 +2,16 @@ from inputs import get_gamepad
 import time
 import threading
 import sys
-import math
 
 
 class XboxController(threading.Thread):
+    """
+    Class for reading from a XboxController and keeping track of it's state.
+    """
+
     def __init__(self, *args):
         super().__init__(*args)
+
         self.x = 0
         self.y = 0
         self.lz = 0
@@ -18,6 +22,20 @@ class XboxController(threading.Thread):
         self.btn_x = 0
         self.btn_y = 0
         self.btn_b = 0
+
+        self._buttons = {
+            "ABS_X",
+            "ABS_Y",
+            "BTN_TL",
+            "BTN_TR",
+            "ABS_Z",
+            "ABS_RZ",
+            "BTN_SOUTH",
+            "BTN_NORTH",
+            "BTN_EAST",
+            "BTN_WEST",
+        }
+
         self.daemon = True
         self.start()
 
@@ -25,8 +43,11 @@ class XboxController(threading.Thread):
         while True:
             events = get_gamepad()
             for event in events:
-                if event.code not in {"ABS_X", "ABS_Y", "BTN_TL", "BTN_TR", "ABS_Z", "ABS_RZ", "BTN_SOUTH", "BTN_NORTH", "BTN_EAST", "BTN_WEST"}:
+                # ignore all other events
+                if event.code not in self._buttons:
                     continue
+
+                # update out internal controller state
                 if event.code == "ABS_X":
                     self.x = event.state / (2 ** 15 - 1)
                 elif event.code == "ABS_Y":
@@ -36,9 +57,9 @@ class XboxController(threading.Thread):
                 elif event.code == "BTN_TR":
                     self.tr = event.state
                 elif event.code == "ABS_Z":
-                    self.lz = event.state / (2**10 - 1)
+                    self.lz = event.state / (2 ** 10 - 1)
                 elif event.code == "ABS_RZ":
-                    self.rz = event.state / (2**10 - 1)
+                    self.rz = event.state / (2 ** 10 - 1)
                 elif event.code == "BTN_SOUTH":
                     self.btn_a = event.state
                 elif event.code == "BTN_NORTH":
@@ -47,14 +68,16 @@ class XboxController(threading.Thread):
                     self.btn_y = event.state
                 elif event.code == "BTN_EAST":
                     self.btn_b = event.state
-                else:
-                    print(event.code, event.state)
-            # print(f"{self.x:.2f}, {self.y:.2f}")
 
 
 if __name__ == "__main__":
     controller = XboxController()
     while True:
         sys.stdout.write("\033[2K\033[1G")
-        print(f"x: {controller.x:.2f}, y: {controller.y:.2f}, lz: {controller.lz:.2f}, rz: {controller.rz:.2f}, tl: {controller.tl}, tr: {controller.tr}", end="\r")
+        print(
+            f"x: {controller.x:.2f}, y: {controller.y:.2f}, \
+            lz: {controller.lz:.2f}, rz: {controller.rz:.2f}, \
+            tl: {controller.tl}, tr: {controller.tr}",
+            end="\r",
+        )
         time.sleep(0.025)
